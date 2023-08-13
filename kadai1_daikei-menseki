@@ -1,0 +1,4 @@
+upper_side=10
+down_side=20
+High=5
+print("上辺10cm,下辺20cm,高さ5cmの台形の面積は"+str((upper_side+down_side)*High/2)+"cm²")
