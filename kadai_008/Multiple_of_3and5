@@ -1,0 +1,14 @@
+import random
+var = random.randint(1,1000000)
+if var%3 == 0 and var%5 == 0 :
+  print(var)
+  print("FizzBuzz")
+elif var%3 ==0 and var%5 != 0 :
+  print(var)
+  print("Fizz")
+elif var%3 !=0 and var%5 == 0 :
+  print(var)
+  print("Buzz")
+else :
+  print(var)
+  print("3の倍数でも5の倍数でもない")
