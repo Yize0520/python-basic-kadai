@@ -1,0 +1,9 @@
+def add_tax(price, tax)->int:
+ # 与えられた引数priceに(引数tax+1)を乗じ、変数totalに代入する
+ total = price *( tax+1)
+ # 変数totalの値を出力する
+ print(f"{total}円")
+# 関数を呼び出し、引数として税抜価格と消費税率（％）を渡す
+price = 3000
+tax = 0.1
+add_tax(price, tax)
