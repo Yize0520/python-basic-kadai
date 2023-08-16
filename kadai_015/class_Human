@@ -1,1 +1,19 @@
+class Human:
+   # コンストラクタを定義する
+   def __init__(self, name, age):
+     self.name = name
+     self.age = age
 
+   # メソッドを定義する
+   def reference(self):
+     return f"{self.name}：{self.age}歳"
+   
+# インスタンス化する
+daisuke=Human("大介",10)
+hiroki=Human("弘樹",11)
+ayaka=Human("綾香",12)
+
+# メソッドにアクセスし実行
+print(daisuke.reference())
+print(hiroki.reference())
+print(ayaka.reference())
