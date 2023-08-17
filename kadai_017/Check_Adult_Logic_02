@@ -1,1 +1,22 @@
+class Human:
+    def __init__(self, name, age, gender):
+        self.name = name
+        self.age = age
+        self.gender = gender
 
+    def check_adult(self):
+        if self.age >= 20:
+            return  self.name +"さんは"+str(self.age)+"歳の"+self.gender+"でもう成年です。"
+        else:
+            return  self.name + "さんは"+str(self.age)+"歳の"+self.gender+"でまだ未成年です。"
+
+A = Human("A", 19, "男性")
+B = Human("B", 20, "女性")
+C = Human("C", 18, "男性")
+D = Human("D", 24, "女性")
+E = Human("E", 21, "男性")
+
+humans = [A, B, C, D, E]
+
+for human in humans:
+    print(human.check_adult())
