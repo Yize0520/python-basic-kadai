@@ -1,1 +1,123 @@
+import os
+import pandas as pd
+from datetime import date
+
+# ステップ1: 各店からの注文データをまとめる
+order_dir = 'samples/order_new'
+order_files = os.listdir(order_dir)
+order_today = []
+
+for file in order_files:
+    if file.startswith('order_') and file.endswith('.xlsx'):
+        order_data = pd.read_excel(os.path.join(order_dir, file))
+        # 各野菜の注文数を合計
+        total_order = order_data.sum()
+        order_today.append(total_order)
+
+# order_todayをDataFrameに変換
+order_today_df = pd.DataFrame(order_today, columns=['トマト', 'キャベツ', 'レタス', '白菜', 'ほうれん草', '大根', 'ニンジン'])
+order_today_filename = f"order_today.xlsx"
+order_today_df.to_excel(order_today_filename, index=False)
+
+# ステップ2: 現在の在庫状況を確認
+inventory_file = 'samples/inventory.xlsx'
+inventory_data = pd.read_excel(inventory_file)
+inventory_yesterday = inventory_data.iloc[-1]
+print(inventory_yesterday)
+
+# inventory_yesterdayをDataFrameに変換
+inventory_yesterday_df = pd.DataFrame([inventory_yesterday], columns=['トマト', 'キャベツ', 'レタス', '白菜', 'ほうれん草', '大根', 'ニンジン'])
+inventory_yesterday_filename = f"inventory_yesterday.xlsx"
+inventory_yesterday_df.to_excel(inventory_yesterday_filename, index=False)
+
+# ステップ3: 発注が必要なアイテムを特定
+order_total = order_today_df.sum()
+inventory_today = inventory_yesterday_df.iloc[0] - order_total
+
+# inventory_todayをDataFrameに変換
+inventory_today_df = pd.DataFrame([inventory_today], columns=['トマト', 'キャベツ', 'レタス', '白菜', 'ほうれん草', '大根', 'ニンジン'])
+inventory_today_filename = f"inventory_today.xlsx"
+inventory_today_df.to_excel(inventory_today_filename, index=False)
+
+# ステップ4: pickup.xlsxからしきい値データと追加量データを読み込む
+pickup_file = 'samples/pickup.xlsx'
+pickup_data = pd.read_excel(pickup_file)
+threshold_data = pickup_data.iloc[-2]
+additional_data = pickup_data.iloc[-1]
+
+# threshold_dataをDataFrameに変換
+threshold_data_df = pd.DataFrame([threshold_data], columns=['トマト', 'キャベツ', 'レタス', '白菜', 'ほうれん草', '大根', 'ニンジン'])
+threshold_data_filename = f"threshold_data.xlsx"
+threshold_data_df.to_excel(threshold_data_filename, index=False)
+
+# additional_dataをDataFrameに変換
+additional_data_df = pd.DataFrame([additional_data], columns=['トマト', 'キャベツ', 'レタス', '白菜', 'ほうれん草', '大根', 'ニンジン'])
+additional_data_filename = f"additional_data.xlsx"
+additional_data_df.to_excel(additional_data_filename, index=False)
+
+# 野菜のリストを定義
+vegetables = ['トマト', 'キャベツ', 'レタス', '白菜', 'ほうれん草', '大根', 'ニンジン']
+
+# 空の2次元配列リストを作成
+request_today = []
+
+# 野菜ごとに在庫としきい値を比較
+for veggie in vegetables:
+    the_inventory = inventory_today_df[veggie].values[0]
+    the_threshold = threshold_data_df[veggie].values[0] 
+    the_additional = additional_data_df[veggie].values[0]
+    
+    if the_inventory < the_threshold:
+        # 在庫がしきい値未満の場合、注文データをリストに追加
+        request_today.append([veggie, the_additional])
+
+
+# ステップ５　注文メールを作成
+subject = "本日の野菜の注文"
+message = "いつもお世話になっております。本日は以下の野菜を注文します。よろしくお願いします。\n\n"
+
+# request_todayリストの各要素を文字列に変換して結合
+for item in request_today:
+    vegetable, quantity = item
+    message += f"{vegetable}: {quantity}個\n"
+
+# messageを出力するか、メール送信のコードを追加する
+print(message)
+
+# 農家にメールを送信
+
+import smtplib
+
+
+# 注文メールを送信する関数
+def send_order_email(email_to, subject, message):
+
+    # ここでSMTPサーバーの設定を行う必要があります
+    smtp_server = "smtp.gmail.com"  # SMTPサーバーのアドレス
+    smtp_port = 587  # SMTPポート番号
+    smtp_username = "junichi.izawa@gmail.com"  # SMTPサーバーのユーザー名
+    smtp_password = "gzfjqgfueekcrqfi"  # SMTPサーバーのパスワード
+
+    from_email = "junichi.izawa@gmail.com"  # 送信元メールアドレス
+    to_email = "izawa@mail.benesse.co.jp"  # 送信先メールアドレス
+
+
+# ステップ６: 在庫状況を最新の情報に更新する
+# 今日の日付をシリアル値で取得
+today_date = date.today()
+    
+# 今日の曜日を取得
+today_weekday = date.today().strftime("%a")
+
+# 在庫表に新しい行を追加する前に、日付データを適切にフォーマット
+new_row = [today_date, today_weekday] + inventory_today_df.values.tolist()[0]
+
+# 新しい行をDataFrameに追加
+inventory_data.loc[len(inventory_data)] = new_row
+
+# 更新された在庫表を保存
+updated_inventory_file = 'samples/inventory.xlsx'
+inventory_data.to_excel(updated_inventory_file, index=False)
+
+print("在庫状況を更新しました。")
 
