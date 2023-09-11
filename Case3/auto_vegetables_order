@@ -96,7 +96,7 @@ def send_order_email(email_to, subject, message):
     smtp_server = "smtp.gmail.com"  # SMTPサーバーのアドレス
     smtp_port = 587  # SMTPポート番号
     smtp_username = "junichi.izawa@gmail.com"  # SMTPサーバーのユーザー名
-    smtp_password = "gzfjqgfueekcrqfi"  # SMTPサーバーのパスワード
+    smtp_password = "****************"  # SMTPサーバーのパスワード
 
     from_email = "junichi.izawa@gmail.com"  # 送信元メールアドレス
     to_email = "izawa@mail.benesse.co.jp"  # 送信先メールアドレス
